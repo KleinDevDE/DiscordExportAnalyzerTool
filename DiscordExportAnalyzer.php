@@ -94,6 +94,22 @@ class DiscordExportAnalyzer
         }
     }
 
+    /**
+     * @param bool $verbose
+     */
+    public function setVerbose(bool $verbose)
+    {
+        $this->verbose = $verbose;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVerbose(): bool
+    {
+        return $this->verbose;
+    }
+
     private function downloadImage(array $urls)
     {
         foreach ($urls as $url) {
