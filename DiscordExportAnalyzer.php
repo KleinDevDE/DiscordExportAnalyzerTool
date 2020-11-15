@@ -76,10 +76,10 @@ class DiscordExportAnalyzer
         return $arrResult;
     }
 
-    public function downloadAttachements($downloadFolder = "downloads")
+    public function downloadAttachments($downloadFolder = "downloads")
     {
-        if (!is_dir(SOURCE_FOLDER . DIRECTORY_SEPARATOR . "attachments"))
-            mkdir(SOURCE_FOLDER . DIRECTORY_SEPARATOR . "attachments");
+        if (!is_dir(SOURCE_FOLDER . DIRECTORY_SEPARATOR . $downloadFolder))
+            mkdir(SOURCE_FOLDER . DIRECTORY_SEPARATOR . $downloadFolder);
         foreach ($this->arrMessages as $id => $arrMessage) {
             foreach ($arrMessage as $index => $value) {
                 if (!empty($value[3])) {
