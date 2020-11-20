@@ -204,6 +204,7 @@ class DiscordExportAnalyzer
 
         // [ID] | [Name] | [Time] | [Message] | [Attachment]
         $strHTML = "
+        <h2 style='text-align: center;'>Chat with \"".$this->getNameByID($id)."\"</h2>
         <style>
             #table_chatOverview {
               font-family: Arial, Helvetica, sans-serif;
