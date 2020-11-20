@@ -70,12 +70,16 @@ class DiscordExportAnalyzer
 
     private function getAccountData(): array
     {
+        if ($this->verbose)
+            echo("getAccountData() -> " . SOURCE_FOLDER . DIRECTORY_SEPARATOR . "account" . DIRECTORY_SEPARATOR . "user.json");
         return json_decode(file_get_contents(SOURCE_FOLDER . DIRECTORY_SEPARATOR . "account" . DIRECTORY_SEPARATOR . "user.json"), true);
     }
 
     private function getIDMapping(): array
     {
-        return json_decode(file_get_contents(SOURCE_FOLDER . DIRECTORY_SEPARATOR . "messages" . DIRECTORY_SEPARATOR . "Index.json"), true);
+        if ($this->verbose)
+            echo("getIDMapping() -> " . SOURCE_FOLDER . DIRECTORY_SEPARATOR . "messages" . DIRECTORY_SEPARATOR . "index.json");
+        return json_decode(file_get_contents(SOURCE_FOLDER . DIRECTORY_SEPARATOR . "messages" . DIRECTORY_SEPARATOR . "index.json"), true);
     }
 
     private function getAllMessagesAsArray(): array
