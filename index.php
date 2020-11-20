@@ -13,14 +13,18 @@
 <?php
 require_once "DiscordExportAnalyzer.php";
 
-if (!is_dir(__DIR__.DIRECTORY_SEPARATOR."package")) {
+if (!is_dir(__DIR__ . DIRECTORY_SEPARATOR."package")) {
     if (is_file(__DIR__.DIRECTORY_SEPARATOR."package.zip")) {
+        if (!extension_loaded("zip")){
+            die("package.zip detected but the extension \"zip\" is not loaded! exiting..");
+        }
         $zip = new ZipArchive();
         $zip->open(__DIR__.DIRECTORY_SEPARATOR."package.zip");
-        $zip->extractTo(__DIR__.DIRECTORY_SEPARATOR."package");
+        mkdir(__DIR__ . DIRECTORY_SEPARATOR."package");
+        $zip->extractTo(__DIR__ . DIRECTORY_SEPARATOR."package");
     } else die("The Discord-data-export package must be on the same directory as this script, also it must be named \"package\"!");
 }
-$da = new DiscordExportAnalyzer(__DIR__.DIRECTORY_SEPARATOR."package");
+$da = new DiscordExportAnalyzer(__DIR__ . DIRECTORY_SEPARATOR."package");
 
 
 if (isset($_GET["search"])) {
@@ -32,9 +36,7 @@ if (isset($_GET["search"])) {
         echo $da->getTableWithChatContent($_GET["openChat"], explode(",", $_GET["select"]));
     else echo $da->getTableWithChatContent($_GET["openChat"]);
     return;
-} else {
-    echo $da->getTableWithChats();
-}
+} else echo $da->getTableWithChats();
 ?>
 
 
