@@ -127,11 +127,11 @@ class DiscordExportAnalyzer
         }
         $date = [];
         foreach ($arrResult as $index => $arrMessages) {
-            if (sizeof($arrMessages) == 0){
+            if (sizeof($arrMessages) == 0) {
                 unset($arrResult[$index]);
                 continue;
             }
-            $date[$index] = strtotime($arrMessages[sizeof($arrMessages)-1][1]);
+            $date[$index] = strtotime($arrMessages[sizeof($arrMessages) - 1][1]);
         }
         array_multisort($date, SORT_DESC, $arrResult);
         return $arrResult;
@@ -177,7 +177,7 @@ class DiscordExportAnalyzer
             $status = "Download from $url";
             $content = $this->file_get_content_curl($url);
             file_put_contents("downloads/" . bin2hex(random_bytes(2)) . ".jpg", $content);
-            if ($content == "" || empty($content)) {
+            if (!$content) {
                 $status = "[FAILED] " . $status;
             } else $status = "[OK] " . $status;
             echo($status);
@@ -265,7 +265,7 @@ class DiscordExportAnalyzer
 
         // [ID] | [Name] | [Time] | [Message] | [Attachment]
         $strHTML = "
-        <h2 style='text-align: center;'>Chat with \"".$this->getNameByID($id)."\"</h2>
+        <h2 style='text-align: center;'>Chat with \"" . $this->getNameByID($id) . "\"</h2>
         <style>
             #table_chatOverview {
               font-family: Arial, Helvetica, sans-serif;
@@ -304,7 +304,7 @@ class DiscordExportAnalyzer
             if ($arrMessage == NULL)
                 continue;
             $selected = "";
-            if ($arrIndexToSelect != null && in_array($index, $arrIndexToSelect)){
+            if ($arrIndexToSelect != null && in_array($index, $arrIndexToSelect)) {
                 $selected = "id='selected'";
             }
 
@@ -415,7 +415,7 @@ class DiscordExportAnalyzer
             foreach (explode($raw, " ") as $index => $item) {
                 $strHTML .= "<a href='$item' target='_blank'>Attachment #$intCount</a>";
             }
-        } else $strHTML .="<a href='$raw' target='_blank'>Attachment #1</a>";
+        } else $strHTML .= "<a href='$raw' target='_blank'>Attachment #1</a>";
         return $strHTML;
     }
 
@@ -433,7 +433,7 @@ class DiscordExportAnalyzer
         echo("<pre>" . var_export($object, true) . "</pre>");
     }
 
-    private function highlightMessage(string $message, string $toHighlight) : string
+    private function highlightMessage(string $message, string $toHighlight): string
     {
         return preg_replace("/\w*?$toHighlight\w*/i", "<mark>$0</mark>", $message);
     }
