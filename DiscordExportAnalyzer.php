@@ -59,7 +59,7 @@ class DiscordExportAnalyzer
                     $this->echoDebug($arrMessage);
                 }
 
-                if (isset($arrMessage[1]) && strtotime($arrMessage[1]))
+                if (isset($arrMessage[1]) && strtotime($arrMessage[1]) && sizeof($arrMessage) > 2)
                     $lastIndexWithRealMessageArray = $index;
                 else {
                     if ($this->verbose)
@@ -70,9 +70,23 @@ class DiscordExportAnalyzer
                     unset($arrTmp[$index]);
                 }
             }
-            //TODO Sort by date $arrMessage[1]
+
+            $date = [];
+            foreach ($arrTmp as $index => $arrMessage) {
+                $date[$index] = strtotime($arrMessage[1]);
+            }
+            array_multisort($date, SORT_ASC, $arrTmp);
             $arrResult[$folder] = array_values($arrTmp);
         }
+        $date = [];
+        foreach ($arrResult as $index => $arrMessages) {
+            if (sizeof($arrMessages) == 0){
+                unset($arrResult[$index]);
+                continue;
+            }
+            $date[$index] = strtotime($arrMessages[sizeof($arrMessages)-1][1]);
+        }
+        array_multisort($date, SORT_DESC, $arrResult);
         return $arrResult;
     }
 
