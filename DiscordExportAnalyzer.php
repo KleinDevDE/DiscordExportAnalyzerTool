@@ -264,7 +264,7 @@ class DiscordExportAnalyzer
         return $strHTML;
     }
 
-    public function getTableWithSearchResults(array $searchResults): string
+    public function getTableWithSearchResults(array $searchResults, string $searchTerm): string
     {
         // [ID] | [Name] | [Time] | [Message] | [Attachment] | [Link]
         $strHTML = "
@@ -309,7 +309,7 @@ class DiscordExportAnalyzer
             <tr>
                 <td>$arrMessage[0]</td>
                 <td>" . (empty($arrMessage[1]) ? "" : $this->convertTimeToHumanReadable($arrMessage[1])) . "</td>
-                <td>" . (empty($arrMessage[2]) ? "" : str_replace("\n", "<br>", $arrMessage[2])) . "</td>
+                <td>" . (empty($arrMessage[2]) ? "" : str_replace("\n", "<br>", $this->highlightMessage($arrMessage[2], $searchTerm))) . "</td>
                 <td>" . (empty($arrMessage[3]) ? "" : $this->getHrefLinks($arrMessage[3])) . "</td>
                 <td><a href=' ?openChat=$id&select=$index' target='_blank'>Open</a></td>
             </tr>
@@ -348,13 +348,14 @@ class DiscordExportAnalyzer
     {
         if (empty($raw))
             return "";
+        $strHTML = "";
         if (strpos($raw, " ")) {
-            $strHTML = "";
             $intCount = 1;
             foreach (explode($raw, " ") as $index => $item) {
                 $strHTML .= "<a href='$item' target='_blank'>Attachment #$intCount</a>";
             }
-        } else return "<a href='$raw' target='_blank'>Attachment #1</a>";
+        } else $strHTML .="<a href='$raw' target='_blank'>Attachment #1</a>";
+        return $strHTML;
     }
 
     private function getNameByID($id)
@@ -369,5 +370,10 @@ class DiscordExportAnalyzer
     private function echoDebug($object)
     {
         echo("<pre>" . var_export($object, true) . "</pre>");
+    }
+
+    private function highlightMessage(string $message, string $toHighlight) : string
+    {
+        return preg_replace("/\w*?$toHighlight\w*/i", "<mark>$0</mark>", $message);
     }
 }
