@@ -25,6 +25,49 @@ class DiscordExportAnalyzer
         $this->arrAccountData = $this->getAccountData();
     }
 
+    public static function unzip($zipFile, $pathToExtract)
+    {
+        if (!is_writable($pathToExtract)) {
+            die("This script has no write access to the specified path \"$pathToExtract\"!");
+        }
+        if (!self::isZipArchive($zipFile)) {
+            die("The specified file \"$zipFile\" is not a zip archive!");
+        }
+        if (!extension_loaded("zip")) {
+            die("The extension \"zip\" is not loaded! exiting..");
+        }
+        $zip = new ZipArchive();
+        $zip->open($zipFile);
+        mkdir($pathToExtract . DIRECTORY_SEPARATOR . "package");
+        $zip->extractTo($pathToExtract . DIRECTORY_SEPARATOR . "package");
+    }
+
+    public static function detectDiscordExportPaths($pathToScan): array
+    {
+        $files = scandir($pathToScan);
+        $arrResults = [];
+
+        foreach ($files as $file) {
+            if (is_dir($file)) {
+                if (file_exists(realpath($file) . DIRECTORY_SEPARATOR . "account" . DIRECTORY_SEPARATOR . "user.json"))
+                    $arrResults[] = $file;
+            } else if ($file) {
+                if (self::isZipArchive(realpath($file))) {
+                    if (extension_loaded("zip")) {
+                        $zip = new ZipArchive();
+                        if ($zip->open($file) === TRUE) {
+                            if ($zip->locateName("account/user.json") !== false) {
+                                $arrResults[] = realpath($file);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return $arrResults;
+    }
+
+
     private function getAccountData(): array
     {
         return json_decode(file_get_contents(SOURCE_FOLDER . DIRECTORY_SEPARATOR . "account" . DIRECTORY_SEPARATOR . "user.json"), true);
@@ -389,5 +432,13 @@ class DiscordExportAnalyzer
     private function highlightMessage(string $message, string $toHighlight) : string
     {
         return preg_replace("/\w*?$toHighlight\w*/i", "<mark>$0</mark>", $message);
+    }
+
+    public static function isZipArchive($filename)
+    {
+        if (is_resource($zip = zip_open($filename))) {
+            zip_close($zip);
+            return true;
+        } else return false;
     }
 }
